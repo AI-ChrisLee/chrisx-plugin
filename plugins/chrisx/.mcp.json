@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "chrisx": {
+      "type": "http",
+      "url": "https://app.chrisx.ai/api/mcp"
+    }
+  }
+}
