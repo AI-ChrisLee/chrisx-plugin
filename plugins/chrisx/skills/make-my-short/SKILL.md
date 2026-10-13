@@ -40,7 +40,8 @@ there. Always pass `--data-dir "${CLAUDE_PLUGIN_DATA}"`; settings, Whisper, the 
 
 3. **Cut.** `MS make "<video or folder of takes>" --clean --out "<their folder>/<name>_cut.mp4" --data-dir ...`
    [`--script script.txt`] [`--speed 1` when the take is already sped up]. It prints the job folder with `take.mp4`,
-   `plan.json` and `scenes.draft.json`, and what it cut.
+   `plan.json` and `scenes.draft.json`, and what it cut. In their ChrisX workspace (a CLAUDE.md with `chrisx:start`),
+   the takes are in `content/footage/` and their folder is `content/shorts/`.
 
 4. **Plan the page.** Read `${CLAUDE_PLUGIN_DATA}/short-kit/references/kinetic-types.md` and the draft. Copy the draft to
    `<job>/scenes.json` and turn every scene into the type that shows its line best, with their own screens in the cards.
