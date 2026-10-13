@@ -7,7 +7,7 @@ You need a ChrisX account to use it: start the 14-day free trial at https://chri
 This plugin gives you 3 things inside Claude Code:
 
 1. **The ChrisX connector.** Your ChrisX workspace (your businesses, websites, contacts, outreach and your 6 AI employees) right in Claude. You sign in with your ChrisX account the first time Claude uses it.
-2. **Set up my business marketing system.** Say that sentence and Claude builds your marketing in ChrisX, in order: your website live with its booking page, the follow-up emails every new lead gets, this week's content, and the sales loop (every lead on 1 board, booked, paid). It shows you each part before it goes live and ends on your 1 next step.
+2. **Set up my business marketing system.** Say that sentence and Claude builds your marketing in ChrisX, in order: your website live with its booking page and images, the follow-up emails every new lead gets, your contacts, and a video plan when you want videos. Claude gets the steps from your ChrisX account each time, shows you each part before it goes live and ends on your 1 next step.
 3. **Make my short.** Film a short or a vertical ad on your phone, hand Claude the file, and get back a finished short. It is cut the way a pro editor cuts (1.15x, every pause down to 0.14 s, false starts and repeats out), then built on the kinetic page: your words landing as you speak, your site and photos floating in cards, lists, numbers counting up, bars, steps, your face for the hook and the ask, and an end card with your booking link. Any scene can change: just ask. Claude checks your ChrisX account first and downloads the short maker from ChrisX after you sign in. After that it all runs on your computer. Nothing is uploaded and it costs no credits.
 
 ## Install
