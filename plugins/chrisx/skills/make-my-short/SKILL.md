@@ -1,83 +1,108 @@
 ---
 name: make-my-short
-description: Use this when the member wants to turn a video they filmed (a short or a vertical ad) into a finished short, when they say "make my short", "make my shorts", "edit this video", "cut this ad", or when they hand over a phone take or a folder of takes for a short. A long video for YouTube (a talking take, a screen recording, a walkthrough of several minutes) is the cut-my-video skill, not this. Cuts it the way a pro editor does (1.15x, every pause down to 0.14 s, false starts and repeats out), then builds the kinetic page around it: their words landing as they speak, their screens and photos floating in cards, lists, numbers counting up, bars, steps, and an end card with their booking link. Needs a ChrisX account (checked through the ChrisX connector first). Runs on their own computer; nothing is uploaded and no credits are used.
+description: Use this when the member wants to turn a video they filmed (a short or a vertical ad) into a finished short, when they say "make my short", "make my shorts", "edit this video", "cut this ad", or when they hand over a phone take or a folder of takes for a short. A long video for YouTube (a talking take, a screen recording, a walkthrough of several minutes) is the cut-my-video skill, not this. Cuts it the way a pro editor does (1.15x, every pause down to 0.14 s, false starts and repeats out), puts their words on screen as they say them, adds an end card with the video's link, checks that no word was lost, and puts the finished short in their ChrisX Media. Needs a ChrisX account (checked through the ChrisX connector first). The cut runs on their own computer with ffmpeg and a speech-to-text model; the take never leaves it and no credits are used.
 ---
 
 # Make my short
 
-The member filmed it. You make it postable. Everything runs on their computer: ffmpeg cuts, a local Whisper turns the
-voice into timed words, and the renderer draws the kinetic page. The video never leaves the machine. A short is under
-about 2 minutes. If what they hand over is a long video for YouTube, use the cut-my-video skill instead.
+The member filmed it. You make it postable. You cut it yourself, on their computer, with no credits: ffmpeg cuts, and a
+speech-to-text model such as Whisper gives each word its time. The take never leaves the machine; only the finished
+short goes into their ChrisX Media. A short runs 15 s to 3 minutes. If what they hand over is a long video for YouTube,
+use the cut-my-video skill instead. In a chat with no file tools (no Claude Code), say: "Make my short runs on your
+computer, in Claude Code. Open Claude Code with the ChrisX plugin and send me the video there. Or cut it in your phone's
+editor and keep the script and the link." Then stop.
 
-The script: `python3 "${CLAUDE_PLUGIN_DATA}/short-kit/scripts/make_short.py"` (call it `MS` below). Step 0 puts it
-there. Always pass `--data-dir "${CLAUDE_PLUGIN_DATA}"`; settings, Whisper, the renderer and caches live there.
+Working files go in `${CLAUDE_PLUGIN_DATA}/work/<name>/` (`<work>` below), Whisper in `${CLAUDE_PLUGIN_DATA}/whisper/`,
+and what they told you once in `${CLAUDE_PLUGIN_DATA}/settings.json`.
 
 ## Steps
 
-0. **Get the short maker from ChrisX first, every time.** Make my short is part of ChrisX, and the short maker is not
-   in this plugin: it comes from the ChrisX connector. Call its `get_short_kit` before anything else. It also proves
-   their account. If Claude asks them to sign in, let them; it opens ChrisX's own sign-in. If the connector is not
-   there, refuses, or says the account has no workspace or no plan, stop and say only: "Make my short comes with
-   ChrisX. Start your free trial at https://chrisx.ai, connect it here, then send me the video again." (If it only
-   says the short maker is not ready, tell them to try again in a minute.) Do not cut, render or install anything
-   until `get_short_kit` answers.
-   Then download and unpack the kit exactly as its answer says, into `${CLAUDE_PLUGIN_DATA}/short-kit/`. If
-   `${CLAUDE_PLUGIN_DATA}/short-kit/VERSION` already reads the version it names, skip the download: the kit is
-   current. Otherwise download its link with `curl -fL -o` into a new temporary folder (the link works 5 minutes; call
-   `get_short_kit` again for a fresh one), unzip it into `${CLAUDE_PLUGIN_DATA}/short-kit/` (replace that folder only,
-   never the rest of the data folder), and delete the temporary folder. Never post the link or the zip.
+0. **Check ChrisX first, every time.** Make my short is part of ChrisX. Call the ChrisX connector's `get_workspace`
+   before anything else. It proves their account and names their own business (step 9 uploads to it). If Claude asks
+   them to sign in, let them; it opens ChrisX's own sign-in. If the connector is not there, refuses, or says the account
+   has no workspace or no plan, stop and say only: "Make my short comes with ChrisX. Start your free trial at
+   https://chrisx.ai, connect it here, then send me the video again." Do not cut or install anything until
+   `get_workspace` answers.
 
-1. **Check the tools.** `MS doctor --data-dir "${CLAUDE_PLUGIN_DATA}"`.
-   If it ends in `MISSING`, tell them in 1 line what you'll install and why, and wait for their OK:
-   "To edit on your computer I need ffmpeg (cuts the video), Whisper (turns your voice into timed words) and the
-   renderer (draws the page). About 2.5 GB, one time. OK?"
-   Then `MS setup --ffmpeg --node --data-dir "${CLAUDE_PLUGIN_DATA}"` (drop `--ffmpeg` or `--node` when doctor found
-   them). On a Mac with no Homebrew, send them to https://brew.sh first.
+1. **Check the tools.** ffmpeg (with ffprobe, and its `ass` filter for the words on screen: `ffmpeg -hide_banner -filters`
+   lists it), and a speech-to-text model that gives word times: `mlx-whisper` on an Apple Silicon Mac (`uname -sm` says
+   `Darwin arm64`), `faster-whisper` everywhere else, in a Python 3 venv at `${CLAUDE_PLUGIN_DATA}/whisper/`. If one is
+   missing, say which in 1 line and install it on their yes: "To cut on your computer I need ffmpeg (cuts the video) and
+   Whisper (turns your voice into timed words). About 1.5 GB, one time. OK?" ffmpeg with Homebrew on a Mac
+   (`brew install ffmpeg`; no Homebrew: send them to https://brew.sh first), the system's package manager elsewhere.
+   Whisper: `python3 -m venv "${CLAUDE_PLUGIN_DATA}/whisper"`, then its own `pip install mlx-whisper` (or
+   `faster-whisper`). The model (`mlx-community/whisper-large-v3-turbo`, or `large-v3-turbo` for faster-whisper) downloads
+   once, on the first transcription.
 
-2. **Ask only what is missing**, once, in 1 message: their brand color (hex), the call to action and booking link for
-   the end card, and their logo file. They are remembered (`MS settings ... --brand-color --cta --link --logo`).
-   Ask for the screens and photos the short should show: their site, listings, results, reviews. Optional: the script
-   they read, a music file.
+2. **Ask only what is missing**, once, in 1 message, and save the answers to `settings.json`: their brand color (hex),
+   the call to action for the end card, and their logo file if they have one. Optional: the script they read, a music
+   file they own. In their ChrisX workspace (a CLAUDE.md with `chrisx:start`), the takes are in `content/footage/`, the
+   script in `content/scripts/` (the newest file for this video) and the short goes to `content/shorts/`.
+   The end card's link is the video's own link: `get_content_numbers` with status `planned` gives the planned videos
+   with their plan_id (find this one by its title), then `get_video_link` with that plan_id. No plan for it yet:
+   `plan_video` with its title first. A link of null means no live page yet: ask which link to put on the card.
 
-3. **Cut.** `MS make "<video or folder of takes>" --clean --out "<their folder>/<name>_cut.mp4" --data-dir ...`
-   [`--script script.txt`] [`--speed 1` when the take is already sped up]. It prints the job folder with `take.mp4`,
-   `plan.json` and `scenes.draft.json`, and what it cut. In their ChrisX workspace (a CLAUDE.md with `chrisx:start`),
-   the takes are in `content/footage/` and their folder is `content/shorts/`.
+3. **Speed it up.** Several takes: join them in order first. Then 1.15x:
+   `ffmpeg -i "<take>" -filter_complex "[0:v]setpts=PTS/1.15[v];[0:a]atempo=1.15[a]" -map "[v]" -map "[a]" -c:v libx264 -crf 16 -preset veryfast -c:a pcm_s16le "<work>/fast.mkv"`
+   Ask 1 thing only when you cannot tell: did they speed it up already when they exported it? If yes, keep the rate:
+   `ffmpeg -i "<take>" -c:v libx264 -crf 16 -preset veryfast -c:a pcm_s16le "<work>/fast.mkv"`.
 
-4. **Plan the page.** Read `${CLAUDE_PLUGIN_DATA}/short-kit/references/kinetic-types.md` and the draft. Copy the draft to
-   `<job>/scenes.json` and turn every scene into the type that shows its line best, with their own screens in the cards.
-   This is the craft: their words only, their real numbers only, a new picture every 2 to 4 s, never the same type
-   twice in a row.
+4. **Every word with its time.** Transcribe `<work>/fast.mkv` with word times and save each word with its start and end
+   to `<work>/words.json`. With mlx-whisper:
+   `"${CLAUDE_PLUGIN_DATA}/whisper/bin/python" -c 'import json,sys,mlx_whisper; r=mlx_whisper.transcribe(sys.argv[1], path_or_hf_repo="mlx-community/whisper-large-v3-turbo", word_timestamps=True); json.dump([{"w":w["word"],"s":w["start"],"e":w["end"]} for g in r["segments"] for w in g.get("words",[])], open(sys.argv[2],"w"))' "<work>/fast.mkv" "<work>/words.json"`
+   With faster-whisper it is the same list from `WhisperModel("large-v3-turbo").transcribe(path, word_timestamps=True)`.
 
-5. **Render.** `MS kinetic "<job>/scenes.json" --out "<their folder>/<name>_short.mp4" --data-dir ...`
-   It checks the plan first and names any problem; fix the plan and run it again.
+5. **Plan the cut, word by word.** Read the words. Keep the last full, clean try of every line. False starts (a line
+   begun and begun again), repeats and stumbles go, and so does anything before the first line or after the last. With a
+   script, hold the words against it line by line. Then the joins: every pause between kept words comes down to 0.14 s
+   (a span ends 0.07 s after its last word, the next starts 0.07 s before its first; a pause already shorter stays).
+   Save the spans, each with its words, to `<work>/plan.json`. Read the list of what you took out: anything that was
+   real content, not a false start, a repeat or a stumble, is a reason to plan again. A single word that lasts 1.5 s or
+   more may hide a restart the model swallowed: keep its time for step 7.
 
-6. **Look before you hand it over.** Pull 1 frame from near the end of every scene
-   (`ffmpeg -ss <t> -i <short> -frames:v 1 -vf scale=360:-1 f<k>.png`) and look at them: nothing cut off, nothing
-   overlapping, every card readable. Fix the plan and render again if not.
+6. **Render.** Each span to its own piece (`ffmpeg -ss <start> -to <end> -i "<work>/fast.mkv"`, a 10 ms audio fade at
+   each edge so no join clicks, `-c:v libx264 -crf 16 -preset veryfast -c:a pcm_s16le "<work>/p<nnn>.mkv"`), then join
+   the pieces with the concat demuxer (`-f concat -safe 0 -i "<work>/list.txt" -c copy "<work>/joined.mkv"`). Then 1 pass
+   to the short:
+   - Vertical, 1080x1920. A take that is not 9:16 sits whole over a blurred copy of itself, never cropped.
+   - Their words on screen as they say them: an ASS file, `<work>/words.ass`, with every kept word at its time in the cut
+     (the length of the spans before it, plus its place in its own span), 1 to 3 words at a time, big and bold, in the
+     lower third, the word being said in their brand color. Burned in with the `ass` filter. Font: Inter when they have
+     it, else Helvetica or Arial.
+   - The end card: the last frame held 2.5 s (`tpad=stop_mode=clone:stop_duration=2.5`, `apad` on the sound), the call
+     to action and the link on it in big type on a solid box, their logo above it when they gave one.
+   - A music file they own, when they gave one: under the voice, about 20 dB lower.
+   - H.264 (`-crf 20 -pix_fmt yuv420p`), AAC sound, `-movflags +faststart`, to `<their folder>/<name>_short.mp4`.
 
-7. **Report.** Where the file is, how long it is, what the cut took out (in plain words), and the scenes as
-   `time · type · what it shows`. Offer 1 next step: a different hook, a change to any scene, or the next short.
+7. **Prove no word was lost.** Transcribe the finished short again (step 4's way) and hold its words against the plan's
+   kept words, and the script when there is one: every kept word is there, in order. A word missing: find the join that
+   ate it, widen that span, render again and check again. Say "no word lost" only after this check passed. Words in the
+   short that the plan does not hold are one of two things: a line the first reading never wrote down (keep it, and add
+   it to the words on screen), or a false start or a repeat still in (plan it out and render again). Never say the cut
+   is clean while one is in.
+
+8. **Look before you hand it over.** Pull 1 frame from every 3 s and 1 from the end card
+   (`ffmpeg -ss <t> -i "<short>" -frames:v 1 -vf scale=360:-1 f<k>.png`) and look at them: nothing cut off, nothing
+   overlapping, every word on screen readable, the end card's link right. Fix and render again if not.
+
+9. **Put it in their Media.** `upload_media` with the file's name, `video/mp4` and its size in bytes (and the business
+   it is for, when it is a client's). PUT the file to the `upload_url` it gives
+   (`curl -X PUT -H "Content-Type: video/mp4" --data-binary @"<short>" "<upload_url>"`), then `finish_upload` with the
+   upload id, the type and the name. It is free, and a post or an ad can use it from there. Videos go up to 50 MB: a
+   short over that is encoded again at a higher CRF first. Never post the upload link.
+
+10. **Report.** Where the file is, how long it is, what the cut took out in plain words (for example "3 false starts, 1
+    repeat and 9 seconds of pauses"), "no word lost", and that it is in their Media. Offer 1 next step: post it on
+    YouTube Shorts first with the same link in the description, a different hook, a change to the words on screen, or
+    the next short. Last, say how big `<work>` is and ask if they want it deleted; delete that folder only on their yes.
 
 ## Freedom
 
-Any scene can change. "Put my site here", "a list there", "no phone", "bigger", "slower", "no end card": edit
-`scenes.json` and run step 5 again (about a minute). "Show me the plan" lists the scenes. A change to the cut (drop a
-line, use another take) is step 3 again; then the plan follows the new words.
-
-## Captions only
-
-When they can't install Node, or ask for plain captions: `MS make "<video>" --out ... --data-dir ...` without `--clean`
-makes the short on their footage alone (clean captions with the key word in serif italic, the hook, punch-ins, an end
-card), no renderer needed.
+Any change: "cut that line", "keep that pause", "bigger words", "another color", "no end card": change the plan or the
+words file and run step 6 again, then step 7. "Show me the plan" lists the spans with their words. A change to the take
+(use another take, a line filmed again) is step 3 again; then the plan follows the new words.
 
 ## When something fails
 
-Read the `ERROR:` line and fix the cause: a take with no sound, a file the plan names that isn't there, a bad hex
-color, a word range outside the words. Never upload their video anywhere to work around a local problem.
-
-The same kit makes a wide video with no voice (a site's hero, an ad on music): `"format": "16:9"`, `"take": ""`,
-lines as text (`${CLAUDE_PLUGIN_DATA}/short-kit/references/kinetic-types.md`), rendered with the same `kinetic` command.
-
-Remotion (the renderer's engine) is free for individuals and companies with up to 3 employees; a bigger company needs
-its own Remotion license (remotion.dev/license).
+Read ffmpeg's error and fix the cause: a take with no sound, a full disk, a missing tool, a span outside the take, a
+bad hex color. Never upload their take anywhere to work around a local problem.
