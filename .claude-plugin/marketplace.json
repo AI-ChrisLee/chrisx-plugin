@@ -10,7 +10,7 @@
     {
       "name": "chrisx",
       "source": "./plugins/chrisx",
-      "description": "The ChrisX connector, the 'Set up my business marketing system' skill that builds your website, follow-up emails, content and sales board in ChrisX, and a make-my-short skill that edits your phone videos into finished shorts on your own computer."
+      "description": "The ChrisX connector, the 'Set up my business marketing system' skill that builds your offer, website and follow-up emails in ChrisX, then ads or content, a make-my-short skill that edits your phone videos into finished shorts, and a cut-my-video skill that cuts a long video for YouTube with its captions and chapters, both on your own computer."
     }
   ]
 }

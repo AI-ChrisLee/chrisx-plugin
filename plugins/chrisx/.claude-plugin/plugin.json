@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "chrisx",
   "displayName": "ChrisX",
-  "version": "0.2.0",
-  "description": "Get more customers by copying what already works in your industry. ChrisX turns Claude into your marketing team. Your ChrisX workspace in Claude Code, a skill that sets up your business marketing system, and a skill that cuts your phone videos into finished shorts and ads on your own computer.",
+  "version": "0.4.0",
+  "description": "Get more customers by copying what already works in your industry. ChrisX turns Claude into your marketing team. Your ChrisX workspace in Claude Code, a skill that sets up your business marketing system, a skill that cuts your phone videos into finished shorts and ads, and a skill that cuts a long video for YouTube with its captions and chapters, all on your own computer.",
   "author": {
     "name": "Chris Lee",
     "url": "https://chrisx.ai"
@@ -14,6 +14,8 @@
     "marketing",
     "shorts",
     "video-editing",
+    "youtube",
+    "chapters",
     "captions",
     "agency",
     "sales"

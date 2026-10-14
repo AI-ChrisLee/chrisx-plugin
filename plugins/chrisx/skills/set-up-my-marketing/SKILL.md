@@ -1,6 +1,6 @@
 ---
 name: set-up-my-marketing
-description: Use this when the member says "Set up my business marketing system", "set up my marketing", "set up my business" or "Set up my workspace", or opens ChrisX for the first time and asks what to do. Sets up their workspace folder first (in Claude Code), then builds their marketing in ChrisX through the ChrisX connector, in order (their website live with its booking page and images, the follow-up emails, their contacts, and the video plan when they want videos), shows each part before it goes live, and ends on the 1 next step. Needs a ChrisX account (checked through the ChrisX connector first).
+description: Use this when the member says "Set up my business marketing system", "set up my marketing", "set up my business" or "Set up my workspace", or opens ChrisX for the first time and asks what to do. Sets up their workspace folder first (in Claude Code), then builds their marketing in ChrisX through the ChrisX connector, in order (their workspace, their offer, their website live with its booking page and images, their follow-up emails, then ads or content when they want one), shows each part before it goes live, and ends on the 1 next step. Needs a ChrisX account (checked through the ChrisX connector first).
 ---
 
 # Set up my business marketing system

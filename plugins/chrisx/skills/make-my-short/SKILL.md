@@ -1,12 +1,13 @@
 ---
 name: make-my-short
-description: Use this when the member wants to turn a video they filmed (a short or a vertical ad) into a finished short, when they say "make my short", "make my shorts", "edit this video", "cut this ad", or when they hand over a video file or a folder of takes. Cuts it the way a pro editor does (1.15x, every pause down to 0.14 s, false starts and repeats out), then builds the kinetic page around it: their words landing as they speak, their screens and photos floating in cards, lists, numbers counting up, bars, steps, and an end card with their booking link. Needs a ChrisX account (checked through the ChrisX connector first). Runs on their own computer; nothing is uploaded and no credits are used.
+description: Use this when the member wants to turn a video they filmed (a short or a vertical ad) into a finished short, when they say "make my short", "make my shorts", "edit this video", "cut this ad", or when they hand over a phone take or a folder of takes for a short. A long video for YouTube (a talking take, a screen recording, a walkthrough of several minutes) is the cut-my-video skill, not this. Cuts it the way a pro editor does (1.15x, every pause down to 0.14 s, false starts and repeats out), then builds the kinetic page around it: their words landing as they speak, their screens and photos floating in cards, lists, numbers counting up, bars, steps, and an end card with their booking link. Needs a ChrisX account (checked through the ChrisX connector first). Runs on their own computer; nothing is uploaded and no credits are used.
 ---
 
 # Make my short
 
 The member filmed it. You make it postable. Everything runs on their computer: ffmpeg cuts, a local Whisper turns the
-voice into timed words, and the renderer draws the kinetic page. The video never leaves the machine.
+voice into timed words, and the renderer draws the kinetic page. The video never leaves the machine. A short is under
+about 2 minutes. If what they hand over is a long video for YouTube, use the cut-my-video skill instead.
 
 The script: `python3 "${CLAUDE_PLUGIN_DATA}/short-kit/scripts/make_short.py"` (call it `MS` below). Step 0 puts it
 there. Always pass `--data-dir "${CLAUDE_PLUGIN_DATA}"`; settings, Whisper, the renderer and caches live there.
@@ -75,7 +76,7 @@ card), no renderer needed.
 Read the `ERROR:` line and fix the cause: a take with no sound, a file the plan names that isn't there, a bad hex
 color, a word range outside the words. Never upload their video anywhere to work around a local problem.
 
-The same harness makes a wide video with no voice (a site's hero, an ad on music): `"format": "16:9"`, `"take": ""`,
+The same kit makes a wide video with no voice (a site's hero, an ad on music): `"format": "16:9"`, `"take": ""`,
 lines as text (`${CLAUDE_PLUGIN_DATA}/short-kit/references/kinetic-types.md`), rendered with the same `kinetic` command.
 
 Remotion (the renderer's engine) is free for individuals and companies with up to 3 employees; a bigger company needs
