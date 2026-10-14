@@ -9,20 +9,23 @@ You need a ChrisX account to use it: start the 14-day free trial at https://chri
 This plugin gives you 4 things inside Claude Code:
 
 1. **The ChrisX connector.** Your ChrisX workspace (your businesses, websites and contacts, and your 6 playbooks: Offer, Website, Follow-up, Content, Ads and, for agencies, Find clients) right in Claude. You sign in with your ChrisX account the first time Claude uses it.
-2. **Set up my business marketing system.** Say that sentence and Claude builds your marketing in ChrisX, in order: your workspace, your offer, your website live with its booking page and images, the follow-up emails every new lead gets, then content or ads when you want one. Claude gets the steps from your ChrisX account each time, shows you each part before it goes live and ends on your 1 next step. In Claude Code it starts with your workspace: a folder for your business, with your facts and how Claude works for you in its CLAUDE.md, and a place for plans, research, content, ads, photos and each Monday's update. Say "Set up my workspace" to make it or bring it up to date on its own; it never changes a file you edited. Ask for ChrisX work in a folder that is not a workspace yet and Claude offers to set it up first.
+2. **Set up my marketing.** Say that sentence and Claude builds your marketing in ChrisX, in order: your workspace, your offer, your website live with its booking page and images, the follow-up emails every new lead gets, your first content (a script made from the winning videos in your industry, and a post), then ads if you want them. Claude gets the steps from your ChrisX account each time, shows you each part before it goes live and ends on your 1 next step. In Claude Code it starts with your workspace: a folder for your business, with your facts and how Claude works for you in its CLAUDE.md, and a place for plans, research, content, ads, photos and each Monday's update. Say "Set up my workspace" to make it or bring it up to date on its own; it never changes a file you edited. Ask for ChrisX work in a folder that is not a workspace yet and Claude offers to set it up first.
 3. **Make my short.** Film a short or a vertical ad on your phone, hand Claude the file, and get back a finished short. It is cut the way a pro editor cuts (1.15x, every pause down to 0.14 s, false starts and repeats out), then built on the kinetic page: your words landing as you speak, your site and photos floating in cards, lists, numbers counting up, bars, steps, your face for the hook and the ask, and an end card with your booking link. Any scene can change: just ask. Claude checks your ChrisX account first and downloads the short maker from ChrisX after you sign in. After that it all runs on your computer. Nothing is uploaded and it costs no credits.
 4. **Cut my video.** Film one long take (your face, or your screen with your voice), hand Claude the file, and get back a video ready for YouTube. It is cut the same way: 1.15x, every pause down to 0.14 s, false starts and repeats out, and a breath where the topic turns. Claude then listens to the cut again to prove no word was lost, names any spot where a restart may still be in, and gives you a 1080p file (H.264, BT.709, fast start), the captions as an SRT file and the chapter list for your description (taken from the parts of your script when you have one). You upload it in YouTube Studio, about 3 minutes. It uses the same download from ChrisX as Make my short, runs on your computer, uploads nothing and costs no credits.
 
 ## Install
 
-In Claude Code:
+In Claude Code, run these 2 lines, 1 at a time:
 
 ```
 /plugin marketplace add AI-ChrisLee/chrisx-plugin
+```
+
+```
 /plugin install chrisx@chrisx
 ```
 
-Then say "Set up my business marketing system." Later, say "make my short" or "cut my video" and point Claude at your video.
+Restart Claude Code, type /mcp, pick chrisx and sign in with your ChrisX account. Then say "Set up my marketing." Later, say "make my short" or "cut my video" and point Claude at your video.
 
 ## What make my short and cut my video need
 
