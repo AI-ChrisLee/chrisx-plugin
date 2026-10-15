@@ -1,0 +1,7 @@
+interface:
+  display_name: "Cut my video"
+  short_description: "Cut a long take for YouTube with captions and chapters"
+  brand_color: "#146EF5"
+  default_prompt: "Use $cut-my-video to cut my long video for YouTube."
+policy:
+  allow_implicit_invocation: true

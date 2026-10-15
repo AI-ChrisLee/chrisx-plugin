@@ -1,0 +1,7 @@
+interface:
+  display_name: "Make my short"
+  short_description: "Cut a phone take into a finished short on your computer"
+  brand_color: "#146EF5"
+  default_prompt: "Use $make-my-short to turn my video into a finished short."
+policy:
+  allow_implicit_invocation: true

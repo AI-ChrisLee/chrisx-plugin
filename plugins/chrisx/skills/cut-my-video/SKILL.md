@@ -7,32 +7,33 @@ description: Use this when the member wants a long video they filmed (a talking 
 
 The member filmed one long take. You cut it yourself so it is ready for YouTube, on their computer, with no credits:
 ffmpeg cuts, and a speech-to-text model such as Whisper gives each word its time. The video never leaves the machine,
-and you upload nothing. In a chat with no file tools (no Claude Code), say: "Cut my video runs on your computer, in
-Claude Code. Open Claude Code with the ChrisX plugin and send me the video there. Or cut it in your own editor and keep
+and you upload nothing. In a chat with no file tools (not Claude Code or Codex), say: "Cut my video runs on your computer, in
+Claude Code or Codex. Open one of them with the ChrisX plugin and send me the video there. Or cut it in your own editor and keep
 the script and the link." Then stop.
 
-Working files go in `${CLAUDE_PLUGIN_DATA}/work/<name>/` (`<work>` below) and Whisper in
-`${CLAUDE_PLUGIN_DATA}/whisper/`, the same place Make my short uses.
+`<data>` is the plugin's data folder: `${CLAUDE_PLUGIN_DATA}` in Claude Code, and `$HOME/.chrisx` in Codex or anywhere that variable has no value (in a quoted path write $HOME, never ~: the shell does not expand a ~ inside quotes). Working files go in `<data>/work/<name>/` (`<work>` below) and Whisper in
+`<data>/whisper/`, the same place Make my short uses. In Codex, writing to that folder, the install and the model download need network on or an
+approval.
 
 ## Steps
 
 0. **Check ChrisX first, every time.** Cut my video is part of ChrisX. Call the ChrisX connector's `get_workspace`
-   before anything else. It proves their account. If Claude asks them to sign in, let them; it opens ChrisX's own
-   sign-in. If the connector is not there, refuses, or says the account has no workspace or no plan, stop and say only:
+   before anything else. It proves their account. If the connector asks them to sign in, tell them: "Claude Code: type /mcp, pick chrisx and sign in with your ChrisX account. Codex: run `codex mcp login chrisx` in a terminal. ChatGPT: open the ChrisX plugin in your chat and sign in. Then say it again."
+   Wait, then call it again. If the connector is not there, refuses, or says the account has no workspace or no plan, stop and say only:
    "Cut my video comes with ChrisX. Start your free trial at https://chrisx.ai, connect it here, then send me the video
    again." Do not cut or install anything until `get_workspace` answers.
 
 1. **Check the tools.** A cut needs ffmpeg (with ffprobe) and a speech-to-text model that gives word times:
    `mlx-whisper` on an Apple Silicon Mac (`uname -sm` says `Darwin arm64`), `faster-whisper` everywhere else, in a
-   Python 3 venv at `${CLAUDE_PLUGIN_DATA}/whisper/`. If one is missing, say which in 1 line and install it on their
+   Python 3 venv at `<data>/whisper/`. If one is missing, say which in 1 line and install it on their
    yes: "To cut your video I need ffmpeg (cuts it) and Whisper (turns your voice into timed words, so I can cut the
    stumbles and write the captions). About 1.5 GB, one time. OK?" ffmpeg with Homebrew on a Mac (`brew install ffmpeg`;
    no Homebrew: send them to https://brew.sh first), the system's package manager elsewhere. Whisper:
-   `python3 -m venv "${CLAUDE_PLUGIN_DATA}/whisper"`, then its own `pip install mlx-whisper` (or `faster-whisper`). The
+   `python3 -m venv "<data>/whisper"`, then its own `pip install mlx-whisper` (or `faster-whisper`). The
    model (`mlx-community/whisper-large-v3-turbo`, or `large-v3-turbo` for faster-whisper) downloads once, on the first
    transcription.
 
-2. **Find the take and the script.** In their ChrisX workspace (a CLAUDE.md with `chrisx:start`) the take is in
+2. **Find the take and the script.** In their ChrisX workspace (an AGENTS.md or CLAUDE.md with `chrisx:start`) the take is in
    `content/footage/`, the script in `content/scripts/` (the newest file for this video) and the cut goes to
    `content/long/`. Outside a workspace, ask where the video is and put the cut beside it (`<folder>` below). The script
    is the best help there is: it keeps the best take of every line, and each `## ` heading in it becomes a chapter. No
@@ -47,7 +48,7 @@ Working files go in `${CLAUDE_PLUGIN_DATA}/work/<name>/` (`<work>` below) and Wh
 
 4. **Every word with its time.** Transcribe `<work>/fast.mkv` with word times and save each word with its start and end
    to `<work>/words.json`. With mlx-whisper:
-   `"${CLAUDE_PLUGIN_DATA}/whisper/bin/python" -c 'import json,sys,mlx_whisper; r=mlx_whisper.transcribe(sys.argv[1], path_or_hf_repo="mlx-community/whisper-large-v3-turbo", word_timestamps=True); json.dump([{"w":w["word"],"s":w["start"],"e":w["end"]} for g in r["segments"] for w in g.get("words",[])], open(sys.argv[2],"w"))' "<work>/fast.mkv" "<work>/words.json"`
+   `"<data>/whisper/bin/python" -c 'import json,sys,mlx_whisper; r=mlx_whisper.transcribe(sys.argv[1], path_or_hf_repo="mlx-community/whisper-large-v3-turbo", word_timestamps=True); json.dump([{"w":w["word"],"s":w["start"],"e":w["end"]} for g in r["segments"] for w in g.get("words",[])], open(sys.argv[2],"w"))' "<work>/fast.mkv" "<work>/words.json"`
    With faster-whisper it is the same list from `WhisperModel("large-v3-turbo").transcribe(path, word_timestamps=True)`.
 
 5. **Plan the cut, word by word.** Read the words. Keep the last full, clean take of every line. False starts (a line

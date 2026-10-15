@@ -5,7 +5,7 @@
     "name": "Chris Lee",
     "url": "https://chrisx.ai"
   },
-  "description": "Get more customers by copying what already works in your industry. ChrisX is the tool. This plugin and the ChrisX connector let your own Claude do the work inside it.",
+  "description": "Get more customers by copying what already works in your industry. ChrisX is the tool. This plugin and the ChrisX connector let your own AI do the work inside it.",
   "plugins": [
     {
       "name": "chrisx",

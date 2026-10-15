@@ -1,0 +1,7 @@
+interface:
+  display_name: "Set up my marketing"
+  short_description: "Build your offer, website, follow-up and content in ChrisX"
+  brand_color: "#146EF5"
+  default_prompt: "Use $set-up-my-marketing to set up my marketing in ChrisX."
+policy:
+  allow_implicit_invocation: true
