@@ -1,6 +1,6 @@
 ---
 name: make-my-short
-description: Use this when the member wants to turn a video they filmed (a short or a vertical ad) into a finished short, when they say "make my short", "make my shorts", "edit this video", "cut this ad", or when they hand over a phone take or a folder of takes for a short. A long video for YouTube (a talking take, a screen recording, a walkthrough of several minutes) is the cut-my-video skill, not this. Cuts it the way a pro editor does (1.15x, every pause down to 0.14 s, false starts and repeats out), puts their words on screen as they say them, adds an end card with the video's link, checks that no word was lost, and puts the finished short in their ChrisX Media. Needs a ChrisX account (checked through the ChrisX connector first). The cut runs on their own computer with ffmpeg and a speech-to-text model; the take never leaves it and no credits are used.
+description: Use this when the member wants to turn a video they filmed (a short or a vertical ad) into a finished short, when they say "make my short", "make my shorts", "edit this video", "cut this ad", or when they hand over a phone take or a folder of takes for a short. Also when they want a short without filming, as in "make it with my digital twin", "use my twin", "I don't want to film this" (their HeyGen twin reads the script, and that video is the take). A long video for YouTube (a talking take, a screen recording, a walkthrough of several minutes) is the cut-my-video skill, not this. Cuts it the way a pro editor does (1.15x, every pause down to 0.14 s, false starts and repeats out), puts their words on screen as they say them, adds an end card with the video's link, checks that no word was lost, and puts the finished short in their ChrisX Media. Needs a ChrisX account (checked through the ChrisX connector first). The cut runs on their own computer with ffmpeg and a speech-to-text model; the take never leaves it and no credits are used.
 ---
 
 # Make my short
@@ -10,10 +10,38 @@ speech-to-text model such as Whisper gives each word its time. The take never le
 short goes into their ChrisX Media. A short runs 15 s to 3 minutes. If what they hand over is a long video for YouTube,
 use the cut-my-video skill instead. In a chat with no file tools (no Claude Code), say: "Make my short runs on your
 computer, in Claude Code. Open Claude Code with the ChrisX plugin and send me the video there. Or cut it in your phone's
-editor and keep the script and the link." Then stop.
+editor and keep the script and the link." Then stop, unless they want their digital twin to read it: that path (No
+take, below) works in a chat up to its step 5.
 
 Working files go in `${CLAUDE_PLUGIN_DATA}/work/<name>/` (`<work>` below), Whisper in `${CLAUDE_PLUGIN_DATA}/whisper/`,
 and what they told you once in `${CLAUDE_PLUGIN_DATA}/settings.json`.
+
+## No take: their digital twin
+
+When they want the short without filming, their digital twin (their face and their voice, made by HeyGen) reads the
+script, and that video is the take. It runs on their own HeyGen account and plan, never on ChrisX credits. Step 0
+below still comes first.
+
+1. **HeyGen connected?** Look for HeyGen's tools (`prepare_avatar_video`, `create_video_from_avatar`). Missing: say
+   how to add it in 1 message, then wait.
+   - In Claude (desktop or web): Settings, Connectors, Add custom connector, name `HeyGen`, URL
+     `https://mcp.heygen.com/mcp/v1`, then sign in with their HeyGen account.
+   - In Claude Code: `claude mcp add --transport http heygen https://mcp.heygen.com/mcp/v1`, then `/mcp` to sign in.
+   - No HeyGen account yet: they make one at https://www.heygen.com first.
+2. **The script.** The newest file in `content/scripts/`, or the one they paste. No script: write it with the Content
+   playbook first (`list_playbooks`, then `get_playbook` with its id). The twin says it word for word, so fix it now, not after: short
+   sentences, numbers written the way they are said.
+3. **Their twin.** A look id saved in `settings.json`: use it and skip this step. Otherwise `prepare_avatar_video` with
+   the script as `pendingVideoPrompt`, and follow what it returns. With no twin it leads to `open_avatar_creator`,
+   HeyGen's own setup: a photo, a short motion clip, their consent recording and their voice, all done by them on
+   screen. A twin is never made without their own consent recording. When it is ready, save its look id (and its voice
+   id) to `settings.json`.
+4. **The video.** `create_video_from_avatar` with the twin's look id, the script word for word, `aspectRatio` `9:16` and
+   `resolution` `1080p`. `show_video` lets them watch it render; `get_video` gives the file's link once it is done.
+5. **Now it is a take.** Download it to `<work>/twin.mp4` and run the Steps on it from step 1. It was not sped up, so
+   step 3 speeds it to 1.15x, and its script is the script step 5 checks against. In a chat with no file tools:
+   `import_media` with the video's link puts it in their Media uncut; say that the cut and the words on screen need
+   Claude Code.
 
 ## Steps
 
